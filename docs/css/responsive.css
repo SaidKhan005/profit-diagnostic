@@ -1,0 +1,101 @@
+/* ============================================================
+   RESPONSIVE — MUST LOAD LAST
+   ============================================================ */
+
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.2em;
+    }
+
+    .hero .subhead {
+        font-size: 1.05em;
+    }
+
+    .steps-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    section {
+        padding: 60px 0;
+    }
+
+    .hero {
+        padding: 60px 0;
+    }
+
+    .section-title {
+        font-size: 1.5em;
+    }
+
+    .nav-logo {
+        font-size: 0.9em;
+    }
+
+    .cta-primary.cta-sm {
+        font-size: 0.8em;
+        padding: 8px 16px;
+    }
+
+    /* Quiz responsive */
+    .quiz-question {
+        font-size: 1.3em;
+    }
+
+    /* Results responsive */
+    .result-card {
+        padding: 32px 20px;
+    }
+
+    .result-headline {
+        font-size: 1.5em;
+    }
+
+    .score-label {
+        width: 100px;
+        font-size: 0.8em;
+    }
+
+    .result-scores {
+        padding: 20px 16px;
+    }
+
+    .result-cta {
+        padding: 28px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 1.8em;
+    }
+
+    .container {
+        padding: 0 16px;
+    }
+
+    .container-wide {
+        padding: 0 16px;
+    }
+
+    /* Quiz responsive */
+    .quiz-question {
+        font-size: 1.15em;
+    }
+
+    .quiz-option {
+        padding: 16px;
+        gap: 12px;
+    }
+
+    /* Results responsive */
+    .score-row {
+        flex-wrap: wrap;
+    }
+
+    .score-label {
+        width: 100%;
+        text-align: left;
+        margin-bottom: 4px;
+    }
+}

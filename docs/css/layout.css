@@ -1,0 +1,152 @@
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+    padding: 100px 0 80px;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 3.2em;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, #fff 0%, #a0aec0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero .subhead {
+    font-size: 1.25em;
+    color: #a0aec0;
+    max-width: 640px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+}
+
+/* ============================================================
+   SECTION HEADERS
+   ============================================================ */
+.section-label {
+    font-size: 0.85em;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #667eea;
+    margin-bottom: 12px;
+}
+
+.section-title {
+    font-size: 2.2em;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 16px;
+}
+
+.section-subtitle {
+    font-size: 1.1em;
+    color: #a0aec0;
+    max-width: 640px;
+    line-height: 1.7;
+    margin-bottom: 48px;
+}
+
+.section-center {
+    text-align: center;
+}
+
+.section-center .section-subtitle {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ============================================================
+   HOW IT WORKS — STEPS
+   ============================================================ */
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-top: 48px;
+}
+
+.step-card {
+    text-align: center;
+    padding: 40px 24px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+}
+
+.step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(102, 126, 234, 0.15);
+    color: #667eea;
+    font-size: 1.2em;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.step-card h3 {
+    font-size: 1.15em;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.step-card p {
+    font-size: 0.95em;
+    color: #a0aec0;
+    line-height: 1.6;
+}
+
+/* ============================================================
+   FAQ
+   ============================================================ */
+.faq-list {
+    margin-top: 48px;
+}
+
+.faq-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.faq-item summary {
+    padding: 20px 0;
+    font-size: 1.05em;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.faq-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.faq-item summary::after {
+    content: "+";
+    font-size: 1.4em;
+    color: #667eea;
+    font-weight: 300;
+    transition: transform 0.2s;
+}
+
+.faq-item[open] summary::after {
+    content: "\2212";
+}
+
+.faq-answer {
+    padding: 0 0 24px;
+    font-size: 0.95em;
+    color: #a0aec0;
+    line-height: 1.7;
+    max-width: 700px;
+}

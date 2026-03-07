@@ -1,0 +1,209 @@
+/* ============================================================
+   RESULTS CONTAINER
+   ============================================================ */
+#results-container {
+    display: none;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 60px 24px 80px;
+}
+
+/* ── Result Card ──────────────────────────────────── */
+.result-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 48px;
+}
+
+/* ── Badge ────────────────────────────────────────── */
+.result-badge {
+    font-size: 2.5em;
+    margin-bottom: 16px;
+}
+
+/* ── Headline ─────────────────────────────────────── */
+.result-headline {
+    font-size: 2em;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #fff 0%, #a0aec0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ── Explanation ──────────────────────────────────── */
+.result-explanation {
+    font-size: 1.05em;
+    color: #a0aec0;
+    line-height: 1.7;
+    margin-bottom: 40px;
+    max-width: 640px;
+}
+
+/* ── Score Visualization ──────────────────────────── */
+.result-scores {
+    margin-bottom: 48px;
+    padding: 32px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+}
+
+.result-scores-title {
+    font-size: 1.1em;
+    font-weight: 700;
+    margin-bottom: 24px;
+}
+
+.score-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.score-row:last-child {
+    margin-bottom: 0;
+}
+
+.score-label {
+    flex-shrink: 0;
+    width: 140px;
+    font-size: 0.9em;
+    color: #a0aec0;
+    text-align: right;
+}
+
+.score-row--primary .score-label {
+    color: #48bb78;
+    font-weight: 600;
+}
+
+.score-bar-track {
+    flex: 1;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.score-bar-fill {
+    height: 100%;
+    width: 0;
+    background: rgba(102, 126, 234, 0.5);
+    border-radius: 5px;
+    transition: width 0s;
+}
+
+.score-bar-fill--animated {
+    transition: width 0.8s ease-out;
+}
+
+.score-bar-fill--primary {
+    background: linear-gradient(90deg, #48bb78, #38a169);
+}
+
+.score-value {
+    flex-shrink: 0;
+    width: 40px;
+    font-size: 0.85em;
+    font-weight: 600;
+    color: #a0aec0;
+}
+
+.score-row--primary .score-value {
+    color: #48bb78;
+}
+
+/* ── Next Steps ───────────────────────────────────── */
+.result-steps {
+    margin-bottom: 48px;
+}
+
+.result-steps h3 {
+    font-size: 1.3em;
+    font-weight: 700;
+    margin-bottom: 24px;
+}
+
+.result-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.result-step:last-child {
+    border-bottom: none;
+}
+
+.result-step-number {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(72, 187, 120, 0.15);
+    color: #48bb78;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9em;
+    margin-top: 2px;
+}
+
+.result-step-content {
+    font-size: 0.95em;
+    color: #e2e8f0;
+    line-height: 1.6;
+}
+
+/* ── Soft CTA ─────────────────────────────────────── */
+.result-cta {
+    background: rgba(72, 187, 120, 0.06);
+    border: 1px solid rgba(72, 187, 120, 0.15);
+    border-radius: 12px;
+    padding: 36px;
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.result-cta h3 {
+    font-size: 1.3em;
+    margin-bottom: 12px;
+}
+
+.result-cta p {
+    color: #a0aec0;
+    font-size: 0.95em;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ── Retake ────────────────────────────────────────── */
+.result-retake {
+    text-align: center;
+}
+
+.quiz-retake {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #a0aec0;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.quiz-retake:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #fff;
+}

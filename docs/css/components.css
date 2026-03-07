@@ -1,0 +1,16 @@
+/* ============================================================
+   HIGHLIGHT / ACCENT BOXES
+   ============================================================ */
+.insight-box {
+    background: rgba(102, 126, 234, 0.08);
+    border-left: 4px solid #667eea;
+    border-radius: 0 12px 12px 0;
+    padding: 24px 28px;
+    margin: 32px 0;
+    font-size: 1.05em;
+    line-height: 1.7;
+}
+
+.insight-box strong {
+    color: #667eea;
+}

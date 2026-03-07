@@ -1,0 +1,59 @@
+/* ============================================================
+   PRIMARY CTA BUTTON
+   ============================================================ */
+.cta-primary {
+    display: inline-block;
+    background: #48bb78;
+    color: #0a0e27;
+    font-family: inherit;
+    font-size: 1.1em;
+    font-weight: 700;
+    padding: 16px 36px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.cta-primary:hover {
+    background: #38a169;
+    transform: translateY(-1px);
+    text-decoration: none;
+    color: #0a0e27;
+}
+
+.cta-primary:active {
+    transform: translateY(0);
+}
+
+/* Smaller variant for nav */
+.cta-primary.cta-sm {
+    font-size: 0.9em;
+    padding: 10px 22px;
+}
+
+/* ============================================================
+   TRUST & URGENCY LINES
+   ============================================================ */
+.trust-line {
+    display: block;
+    margin-top: 20px;
+    font-size: 0.85em;
+    color: #718096;
+    letter-spacing: 0.5px;
+}
+
+/* ============================================================
+   STEP TIMELINE BADGE
+   ============================================================ */
+.step-time {
+    display: inline-block;
+    font-size: 0.8em;
+    font-weight: 600;
+    color: #667eea;
+    background: rgba(102, 126, 234, 0.12);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+}
