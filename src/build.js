@@ -1,5 +1,5 @@
 /**
- * build.js — Assembles HTML partials + copies CSS/JS/assets into docs/
+ * build.js - Assembles HTML partials + copies CSS/JS/assets into docs/
  * Run with: npm run build
  */
 const fs = require('fs');

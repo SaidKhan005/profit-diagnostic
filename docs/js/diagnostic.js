@@ -5,202 +5,366 @@
     var state = {
         currentQuestion: 0,
         answers: [],
-        scores: { demand: 0, capacity: 0, experience: 0, behavior: 0, menu: 0, labor: 0 },
+        scores: { demand: 0, capacity: 0, experience: 0, behavior: 0, economics: 0, profit: 0 },
         started: false,
         completed: false
     };
 
-    // ── QUESTIONS ──────────────────────────────────────
+    // ── QUESTIONS (from the Restaurant Money Model) ───
     var questions = [
         {
-            text: "On a typical weeknight, how full is your dining room during your busiest hour?",
+            /* Q1 - DEMAND (signal: Guest Count, Covers by period) */
+            text: "During your peak window - your busiest 60 to 90 minutes - how full is your dining room?",
             options: [
-                { text: "Less than half full. We struggle to get people in the door.", scores: { demand: 3 } },
-                { text: "About half full. Some nights are decent, others are dead.", scores: { demand: 2 } },
-                { text: "Mostly full. We could handle more but it\u2019s pretty good.", scores: { demand: 1 } },
-                { text: "Packed. We turn people away or have long waits regularly.", scores: { capacity: 2 } }
+                { text: "Less than half full", scores: { demand: 3 } },
+                { text: "About half full", scores: { demand: 2 } },
+                { text: "Mostly full", scores: { demand: 1 } },
+                { text: "Full or overflowing - turning people away", scores: { capacity: 2 } }
             ]
         },
         {
-            text: "Where do most of your new guests come from?",
+            /* Q2 - DEMAND lever check (model: wrong moves - cutting labor, discounting) */
+            text: "When demand slows, what is your first response?",
             options: [
-                { text: "Honestly, I\u2019m not sure. They just walk in.", scores: { demand: 2 } },
-                { text: "Mostly word of mouth from regulars.", scores: { experience: 1 } },
-                { text: "We run deals and promotions to bring people in.", scores: { behavior: 1, menu: 1 } },
-                { text: "We have a strong local presence and reputation.", scores: {} }
+                { text: "Cut labor to protect the numbers", scores: { capacity: 2, demand: 1 } },
+                { text: "Run discounts or deals", scores: { demand: 2, economics: 1 } },
+                { text: "Review our offer, visibility, and access", scores: {} },
+                { text: "Haven\u2019t thought about it systematically", scores: { demand: 2 } }
             ]
         },
         {
-            text: "During your busiest service, what happens to food quality and timing?",
+            /* Q3 - CAPACITY (model: Constraint Monitors - ticket times, kitchen chit time) */
+            text: "During your busiest service, what happens?",
             options: [
-                { text: "Ticket times stretch, food sits in the window, mistakes go up.", scores: { capacity: 3 } },
-                { text: "We hold it together but the team is visibly stressed.", scores: { capacity: 2, labor: 1 } },
-                { text: "Consistent. The kitchen handles volume well.", scores: {} },
-                { text: "We rarely get busy enough for this to be an issue.", scores: { demand: 2 } }
+                { text: "Ticket times stretch, food sits in the window, mistakes increase", scores: { capacity: 3 } },
+                { text: "Servers are rushing, no time for recommendations, guests feel hurried", scores: { capacity: 2, experience: 1 } },
+                { text: "We hold it together - team manages volume well", scores: {} },
+                { text: "We rarely get busy enough for this to be a problem", scores: { demand: 2 } }
             ]
         },
         {
-            text: "Think about first-time guests. What percentage would you estimate come back within 60 days?",
+            /* Q4 - CAPACITY / cross-layer ("Rushed is capacity overload showing up as experience failure") */
+            text: "During the rush, can your servers guide guest decisions, or are they just trying to keep up?",
             options: [
-                { text: "Very few. Most are one-and-done.", scores: { experience: 3 } },
-                { text: "Maybe a quarter come back. Not great.", scores: { experience: 2 } },
-                { text: "About half return. Decent but could be better.", scores: { experience: 1 } },
-                { text: "Most come back. We have strong repeat business.", scores: {} }
+                { text: "Just keeping up - no time for anything but taking orders and running food", scores: { capacity: 3, behavior: 1 } },
+                { text: "Some servers manage it, most are stretched", scores: { capacity: 2 } },
+                { text: "Most have room to guide and recommend even during the peak", scores: {} },
+                { text: "Plenty of time - the room isn\u2019t full enough", scores: { demand: 1 } }
             ]
         },
         {
-            text: "How do you feel about your average check (spend per guest)?",
+            /* Q5 - EXPERIENCE (model: Repeat Visit Rate - Experience Integrity Indicator) */
+            text: "What percentage of first-time guests come back within 60 days?",
             options: [
-                { text: "It\u2019s low. Guests order the minimum and leave.", scores: { behavior: 3 } },
-                { text: "It\u2019s okay, but guests rarely order drinks, desserts, or extras.", scores: { behavior: 2 } },
-                { text: "It\u2019s decent. Some servers get higher checks than others.", scores: { behavior: 1, labor: 1 } },
-                { text: "It\u2019s strong. Guests explore the menu and add on naturally.", scores: {} }
+                { text: "Very few return", scores: { experience: 3 } },
+                { text: "Maybe a quarter come back", scores: { experience: 2 } },
+                { text: "About half return", scores: { experience: 1 } },
+                { text: "Most come back - strong repeat business", scores: {} }
             ]
         },
         {
-            text: "When a guest sits down, how does your team handle the ordering process?",
+            /* Q6 - EXPERIENCE / Value Equation (Consistency, Speed, Friction + Emotional Flatness) */
+            text: "Which best describes your typical guest experience during a busy night?",
             options: [
-                { text: "They take the order. Not much guidance or recommendation.", scores: { behavior: 2, labor: 1 } },
-                { text: "Some servers suggest things, but it\u2019s inconsistent.", scores: { behavior: 1, labor: 1 } },
-                { text: "We have scripts or prompts but not everyone follows them.", scores: { labor: 2 } },
-                { text: "The team actively guides guests through the menu. Recommendations are consistent.", scores: {} }
+                { text: "Food quality and consistency drop - different standards on different nights", scores: { experience: 3 } },
+                { text: "Service feels rushed - drinks not refilled, checks delayed, guests hurried", scores: { experience: 2, capacity: 1 } },
+                { text: "Service is fine but forgettable - polite but no moments, no storytelling", scores: { behavior: 2 } },
+                { text: "Guests feel taken care of - delivery is smooth, worth repeating", scores: {} }
             ]
         },
         {
-            text: "Do you know which menu items make you the most money and which ones lose money?",
+            /* Q7 - BEHAVIOR ("Same menu. Same prices. Different outcome. That means framing.") */
+            text: "Same menu, same prices - does average check vary significantly by server?",
             options: [
-                { text: "Not really. I price based on gut feel or competitors.", scores: { menu: 3 } },
-                { text: "I know my food cost percentages, but not profit per item.", scores: { menu: 2 } },
-                { text: "I have a rough idea, but I haven\u2019t done a full menu analysis.", scores: { menu: 1 } },
-                { text: "Yes. I\u2019ve engineered my menu and know my stars, plowhorses, and dogs.", scores: {} }
+                { text: "Yes, hugely - 30 to 40 percent difference", scores: { behavior: 2 } },
+                { text: "Some variation, not dramatic", scores: { behavior: 1 } },
+                { text: "Pretty consistent across the team", scores: {} },
+                { text: "I don\u2019t track this", scores: { behavior: 1, economics: 1 } }
             ]
         },
         {
-            text: "What do your bestsellers look like?",
+            /* Q8 - BEHAVIOR signals (Beverage Attach Rate + Dessert Rate) */
+            text: "What is happening with your beverage attach rate and dessert rate?",
             options: [
-                { text: "Our most popular items are our cheapest items.", scores: { menu: 2, behavior: 1 } },
-                { text: "Guests tend to cluster around the same 3\u20134 dishes. Not much variety.", scores: { menu: 2 } },
-                { text: "There\u2019s a good spread, but I\u2019m not sure if the popular ones are profitable.", scores: { menu: 1 } },
-                { text: "Our bestsellers are also our most profitable items.", scores: {} }
+                { text: "Both low - guests order their meal and leave", scores: { behavior: 3 } },
+                { text: "Drinks are okay but desserts almost never happen", scores: { behavior: 2 } },
+                { text: "Both decent but could be higher", scores: { behavior: 1 } },
+                { text: "Strong - guests explore the menu and add on naturally", scores: {} }
             ]
         },
         {
-            text: "How would you describe your staffing on a typical busy night?",
+            /* Q9 - ECONOMICS ("Economics is NOT food cost %. It's prime cost engineering.") */
+            text: "Do you know which items produce the most profit per labor minute - and which ones are bleeders?",
             options: [
-                { text: "Understaffed. The team is stretched thin and it shows.", scores: { labor: 3, experience: 1 } },
-                { text: "We have enough people, but they\u2019re not in the right positions.", scores: { labor: 2 } },
-                { text: "Overstaffed. Labor costs are high but I\u2019m afraid to cut.", scores: { labor: 2, menu: 1 } },
-                { text: "Well-matched. The right people in the right roles for the volume.", scores: {} }
+                { text: "No - I price based on gut feel or food cost percentage", scores: { economics: 3 } },
+                { text: "I know food costs but haven\u2019t factored in labor time per item", scores: { economics: 2 } },
+                { text: "Rough sense but no full prime cost analysis", scores: { economics: 1 } },
+                { text: "Yes - I\u2019ve engineered around prime cost, know my heroes and bleeders", scores: {} }
             ]
         },
         {
-            text: "What keeps you up at night about your restaurant\u2019s finances?",
+            /* Q10 - PROFIT / system-level ("Compounding vs Surviving") */
+            text: "Which best describes how you\u2019re operating right now?",
             options: [
-                { text: "Revenue is too low. I need more guests.", scores: { demand: 2 } },
-                { text: "Revenue is fine, but there\u2019s nothing left at the end of the month.", scores: { menu: 2, labor: 1 } },
-                { text: "I\u2019m busy but it doesn\u2019t feel sustainable. My team is burning out.", scores: { capacity: 2, labor: 1 } },
-                { text: "I feel like there\u2019s money being left on the table every shift but I can\u2019t pinpoint where.", scores: { behavior: 2, menu: 1 } }
+                { text: "Chasing daily sales targets, cutting labor when slow, discounting to hit numbers", scores: { profit: 2, capacity: 1 } },
+                { text: "Revenue is fine but nothing left at the end of the month - busy but broke", scores: { economics: 2, capacity: 1 } },
+                { text: "Money is being left on the table every shift but can\u2019t pinpoint where", scores: { behavior: 2, economics: 1 } },
+                { text: "Profit is growing, tracking repeat rate, investing in capacity, engineering defaults", scores: {} }
             ]
         }
     ];
 
-    // ── MAX SCORES (for percentage calc) ──────────────
-    var maxScores = { demand: 11, capacity: 9, experience: 7, behavior: 11, menu: 11, labor: 10 };
+    // ── MAX SCORES (max contribution per question, summed) ──
+    var maxScores = { demand: 8, capacity: 12, experience: 7, behavior: 10, economics: 7, profit: 2 };
 
     // ── CATEGORY LABELS ───────────────────────────────
     var categoryLabels = {
         demand: 'Demand',
         capacity: 'Capacity',
-        experience: 'Guest Experience',
-        behavior: 'Check Average',
-        menu: 'Menu Economics',
-        labor: 'Labor Efficiency'
+        experience: 'Experience',
+        behavior: 'Behavior',
+        economics: 'Economics',
+        profit: 'Profit'
     };
 
     // ── CATEGORY ICONS ────────────────────────────────
     var categoryIcons = {
-        demand: '\uD83D\uDCCA',
-        capacity: '\u26A1',
-        experience: '\uD83D\uDD04',
-        behavior: '\uD83D\uDCB0',
-        menu: '\uD83C\uDF7D\uFE0F',
-        labor: '\uD83D\uDC65',
-        mixed: '\uD83D\uDD0D'
+        demand: '\uD83D\uDCE3',
+        capacity: '\u2699\uFE0F',
+        experience: '\u2728',
+        behavior: '\uD83E\uDDE0',
+        economics: '\uD83D\uDCCA',
+        profit: '\uD83D\uDCB0',
+        mixed: '\uD83D\uDD17'
     };
 
-    // ── RESULTS DATA ──────────────────────────────────
+    // ── RESULTS DATA (all language from the Restaurant Money Model) ──
     var results = {
         demand: {
-            headline: 'Your #1 Bottleneck: Demand',
-            explanation: 'Your restaurant has the capacity to serve more guests than it\u2019s currently attracting. Before optimizing operations, menus, or staffing, the priority is filling the room. Empty seats are the most expensive problem in the restaurant business because your fixed costs run whether the tables are full or not.',
+            icon: '\uD83D\uDCE3',
+            title: 'DEMAND',
+            quote: 'When seats are empty, operations aren\u2019t the constraint. Demand is. Before perfecting the system, earn the right to optimize it by filling the room.',
+            description: 'Your restaurant\u2019s primary constraint is demand. The model is clear: when the dining room isn\u2019t full during peak windows, no amount of operational optimization matters. You cannot behavior-engineer, menu-engineer, or cost-cut your way to profit if the seats are empty. Demand must be solved first.',
             steps: [
-                '<strong>Build a named offer for your slowest daypart.</strong> Not a discount. A packaged experience with a clear name and reason to visit. Example: "Tuesday Supper Club" or "Weeknight Power Pair." Make it specific enough that a guest could tell a friend about it in one sentence.',
-                '<strong>Audit your digital front door.</strong> Google your restaurant right now. Is the menu current? Are hours correct? Do photos look appealing? Are recent reviews responded to? Fix every friction point between "I\u2019m interested" and "I\u2019m walking in."',
-                '<strong>Launch one local partnership this month.</strong> Reach out to a nearby hotel, office building, or community group. Offer a private tasting or group rate. One consistent source of 20 new covers per week changes the math entirely.'
+                {
+                    title: 'Build a Named Offer',
+                    content: 'The model\u2019s Offer First framework: before spending on visibility, build something worth being visible for. A named, specific, compelling reason for a guest to choose your restaurant over every other option - including staying home. Not \u201Cgreat food and atmosphere.\u201D A real offer.'
+                },
+                {
+                    title: 'Align the Team Before Going External',
+                    content: 'The model\u2019s visibility sequence: Inside \u2192 Insight \u2192 Amplify \u2192 Own. Start with your current guests and staff (Inside). Learn what\u2019s actually working (Insight). Amplify what converts. Then build owned channels. Do not skip to paid ads.'
+                },
+                {
+                    title: 'Remove Friction Between Attraction and Arrival',
+                    content: 'The model\u2019s Access framework: once you have an offer and visibility, remove every barrier between \u201CI want to go\u201D and \u201CI\u2019m seated.\u201D Booking friction, parking confusion, unclear hours, poor signage - these are demand killers hiding in plain sight.'
+                }
             ],
+            warning: {
+                title: 'Wrong Moves the Model Warns Against',
+                text: 'Cutting labor when demand is low: Fewer covers \u2192 panic \u2192 cut staff \u2192 worse experience when guests do come \u2192 fewer return visits \u2192 even fewer covers. This is the beginning of the death spiral. Discounting without a conversion path: attracts price buyers \u2192 compresses margins \u2192 creates labor pressure \u2192 the labor cycle repeats. The business trains guests to come for the discount, not the experience.'
+            },
             cta: 'Want a full breakdown of where your demand gaps are and a prioritized plan to fill them? The Peak Profit Audit gives you exactly that.'
         },
         capacity: {
-            headline: 'Your #1 Bottleneck: Capacity',
-            explanation: 'You have the guests. The demand is there. But your operation is struggling to serve the volume without quality breaking down. When capacity is the bottleneck, the fix is not "try harder." It\u2019s redesigning how the restaurant handles volume so that quality holds under pressure.',
+            icon: '\u2699\uFE0F',
+            title: 'CAPACITY',
+            quote: 'Capacity is not how many seats we have. Capacity is how many guests we can take care of while honoring the standard of experience we\u2019ve committed to creating.',
+            description: 'Your primary constraint is capacity. You have the demand, but your operation cannot serve it without degrading the guest experience. The model defines capacity through three ceilings: FOH Server Capacity, Room Capacity, and Kitchen Capacity. Your True Guest Capacity equals the minimum of these three - the lowest ceiling is the binding constraint.',
             steps: [
-                '<strong>Measure your Capacity Load Ratio.</strong> Take your peak-hour covers and divide by the maximum your kitchen and floor can handle at full quality. If that number is above 0.90, you\u2019re overloaded and guest experience is degrading even if you don\u2019t feel it yet.',
-                '<strong>Stagger your seating.</strong> If your host seats 8 tables in 15 minutes and then nothing for 30, your kitchen gets slammed then idles. Spreading arrivals evenly across the service window smooths the pressure on every station.',
-                '<strong>Identify your slowest station.</strong> Time each kitchen station during a busy service. The one with the longest ticket time is your constraint. Everything else waits for it. Fix that station first\u2014whether it means prep changes, equipment, or staffing.'
+                {
+                    title: 'Identify the Binding Ceiling',
+                    content: 'True Guest Capacity = MIN(FOH Server Capacity, Room Capacity, Kitchen Capacity). Which ceiling is lowest? Watch the model\u2019s three Constraint Monitors: Host tracks Turn Time, Expo tracks Kitchen Chit Time, Bar tracks Bar Chit Time. Where times are stretching is where the ceiling lives.'
+                },
+                {
+                    title: 'Target Capacity Load Between 0.75 and 0.90',
+                    content: 'Capacity Load = Covers in Peak Window \u00F7 True Guest Capacity. The model\u2019s optimal zone is 0.75\u20130.90. Below 0.75, you\u2019re underutilizing. Above 0.90, experience starts degrading - rushed service, mistakes, no time for behavioral guidance. Know your number.'
+                },
+                {
+                    title: 'Raise the Ceiling Structurally',
+                    content: 'The model provides four structural fixes: Section Geometry (optimize server sections for fewer steps, less cross-traffic), Temporal Staggering (spread arrivals to flatten the spike), Door Control (manage flow at the host stand), and Role Specialization (dedicate roles during peak instead of asking everyone to do everything).'
+                }
             ],
+            warning: {
+                title: 'The Labor Percentage Trap',
+                text: 'The model warns: chasing a labor percentage target by cutting staff is the wrong move when capacity is the constraint. If you are at 0.90+ Capacity Load and cut labor, you don\u2019t save money - you destroy the experience, kill repeat visits, and start the death spiral. Labor percentage is a result, not a lever.'
+            },
+            crossLayer: {
+                title: 'Cross-Layer Effect',
+                text: 'When capacity is overloaded, it shows up everywhere downstream. Rushed service looks like an experience problem. Servers who can\u2019t guide look like a behavior problem. The model is explicit: when experience or behavior indicators decline, check CAPACITY before adjusting training, scripts, or pricing.'
+            },
             cta: 'The Peak Profit Audit maps your exact capacity constraint and gives you a sequenced plan to increase throughput without sacrificing guest experience.'
         },
         experience: {
-            headline: 'Your #1 Bottleneck: Guest Experience',
-            explanation: 'Your guests are coming in, but not enough are coming back. Something in the visit itself isn\u2019t converting first-timers into regulars. The issue is rarely one catastrophic failure. It\u2019s usually a collection of small friction points that add up to a forgettable experience.',
+            icon: '\u2728',
+            title: 'EXPERIENCE',
+            quote: 'Experience is the operational delivery of value - converting a guest\u2019s time and attention into something worth repeating.',
+            description: 'Your primary constraint is experience. Guests are coming in, your capacity can handle them, but the experience isn\u2019t converting first-time visitors into repeat guests. The model measures this through Experience Integrity Indicators: Turn Time stability, Complaints and Comps trending, and most critically - Repeat Visit Rate.',
             steps: [
-                '<strong>Track your 60-day repeat rate.</strong> Pull data from your POS or reservation system. What percentage of first-time guests return within 60 days? Below 30% means the experience isn\u2019t earning trust. This is the single most important number you\u2019re probably not tracking.',
-                '<strong>Secret-shop your own restaurant.</strong> Send someone in as a first-time guest on a busy Friday. Have them document everything: greeting time, drink speed, recommendations made, farewell quality. The report will reveal friction you\u2019ve normalized.',
-                '<strong>Fix the first 90 seconds and the last 90 seconds.</strong> Guests remember the beginning and end most vividly. Nail the greeting (immediate acknowledgement, eye contact, warmth) and the farewell (genuine thank-you, invitation to return). The bookends determine whether they come back.'
+                {
+                    title: 'Diagnose Through the Operational Value Equation',
+                    content: 'The model defines operational value as: (What We Deliver \u00D7 Consistency) \u00F7 (Speed \u00D7 Friction). High delivery with poor consistency kills value. Fast service with high friction kills value. Identify which component is failing - it\u2019s usually consistency or friction, not the offer itself.'
+                },
+                {
+                    title: 'Check for Value Killers',
+                    content: 'The model identifies four Value Killers: Cognitive Overload (too many choices, confusing menu), Attention Dilution (servers spread too thin to be present), Friction with Staff (awkward interactions, inattentive service), and Rushed Experience (capacity overload showing up as experience failure). Each has specific symptoms and metrics.'
+                },
+                {
+                    title: 'Protect Lifetime Value',
+                    content: 'LTV = Average Spend \u00D7 Visit Frequency \u00D7 Retention Period. The model states: one bad experience can destroy years of accumulated value. Experience isn\u2019t a soft metric - it\u2019s the mechanism that converts single visits into compounding revenue.'
+                }
             ],
+            crossLayer: {
+                title: 'Check Capacity First',
+                text: 'The model\u2019s cross-layer diagnosis rule: when experience indicators decline, check CAPACITY before adjusting training, scripts, or pricing. Rushed experience is often capacity overload in disguise. If your Capacity Load is above 0.90, the experience problem may resolve by fixing the upstream constraint.'
+            },
             cta: 'The Peak Profit Audit identifies exactly where your guest experience breaks down and gives you the specific operational fixes in priority order.'
         },
         behavior: {
-            headline: 'Your #1 Bottleneck: Check Average',
-            explanation: 'Your guests are visiting, but spending less than they could. This isn\u2019t about raising prices. It\u2019s about framing, guiding, and creating opportunities for guests to explore more of what you offer. Restaurants that fix behavior constraints typically see 15\u201325% check average increases without changing a single menu price.',
+            icon: '\uD83E\uDDE0',
+            title: 'BEHAVIOR',
+            quote: 'Same menu. Same prices. Different outcome. That means framing, not economics. People do not resist price. They resist unexplained price.',
+            description: 'Your primary constraint is behavior. Demand is there, capacity handles it, the experience is solid - but guests aren\u2019t being guided to higher-value decisions. The model is clear: this is about framing, not selling. When average check varies by 30\u201340% between servers with the same menu and prices, the variable is behavioral guidance.',
             steps: [
-                '<strong>Implement a "First 30 Seconds" drink prompt.</strong> The highest-impact behavior change is getting a drink order before the food order. Train every server to lead with a specific recommendation: "We just tapped a new local IPA\u2014can I start you with one?" A specific suggestion outperforms "can I get you something to drink?" significantly.',
-                '<strong>Benchmark your top server\u2019s check average.</strong> Pull check averages by server. Your best server is likely 20\u201340% higher than your worst. Study what they do differently\u2014it\u2019s almost always recommendations, pacing, and enthusiasm. Build training around their approach.',
-                '<strong>Add one guided pairing or bundle.</strong> Create a "chef\u2019s recommendation" pairing (entree + drink + side) at a price point 15\u201320% above your current average check. Position it as the easy choice, not the expensive choice. Guests who are unsure what to order gravitate toward curated options.'
+                {
+                    title: 'Verify Capacity Conditions First',
+                    content: 'The model requires this check: behavioral guidance only works when servers have the time and space to guide. If Capacity Load is above 0.90, servers are in survival mode - they can\u2019t frame, recommend, or create moments. Fix capacity before training behavior.'
+                },
+                {
+                    title: 'Deploy Behavioral Monetization Vehicles',
+                    content: 'The model defines five vehicles: Curated Pairings (suggest specific combinations), Chef Moments (create story-worthy interactions), Guided Progression (lead the meal arc from start to dessert), Bundles Near Singles (position a paired option next to the solo item), and Refill Prompts (systematic not random). These expand perceived value - they don\u2019t pressure.'
+                },
+                {
+                    title: 'Fix Emotional Flatness',
+                    content: 'The model identifies Emotional Flatness as a value killer in the behavior layer: service is competent but creates no feeling. No surprise, no story, no moment the guest remembers. The fix isn\u2019t scripting - it\u2019s creating the conditions where genuine moments can happen. Pressure shrinks value. Guidance expands it.'
+                }
             ],
+            warning: {
+                title: 'Wrong Behavioral Fixes',
+                text: 'The model warns against four traps: Don\u2019t sell harder (pressure shrinks value). Don\u2019t add more rules (rigidity kills authenticity). Don\u2019t remove choice (autonomy drives satisfaction). Don\u2019t discount (it trains guests to wait for deals instead of valuing the experience). Guidance expands value. Pressure contracts it.'
+            },
             cta: 'The Peak Profit Audit breaks down your check average by server, daypart, and item mix to show you exactly where the missed revenue is hiding.'
         },
-        menu: {
-            headline: 'Your #1 Bottleneck: Menu Economics',
-            explanation: 'Your menu may be popular, but it\u2019s not engineered for profit. You could be selling high volumes of items that barely contribute to your bottom line while your most profitable items sit ignored. Menu economics isn\u2019t about food cost percentage\u2014it\u2019s about profit dollars per item sold.',
+        economics: {
+            icon: '\uD83D\uDCCA',
+            title: 'ECONOMICS',
+            quote: 'Economics is NOT food cost percentage. Economics is prime cost engineering.',
+            description: 'Your primary constraint is economics. The upstream layers are working - guests come in, capacity handles them, experience converts them, servers guide well - but the items being sold aren\u2019t producing enough profit per constraint. The model redefines economics: it\u2019s not about food cost percentage, it\u2019s about prime cost per item, including the labor to produce it.',
             steps: [
-                '<strong>Run a menu profitability matrix.</strong> For every item: selling price minus total food cost = gross profit. Multiply gross profit by weekly volume. Rank every item by total weekly profit contribution. You\u2019ll likely discover that 20% of your menu generates 80% of your profit.',
-                '<strong>Reposition your top 3 profit items.</strong> Once identified, put your highest-profit items where eyes go first: top right of the menu, first item in each section, server verbal recommendations. Don\u2019t add new items. Move the winners to where they get noticed.',
-                '<strong>Consider cutting your 3 lowest performers.</strong> Items that sell poorly AND have low margins are actively hurting you. They consume prep time, inventory space, and mental energy. Remove them. No guest will miss an item they weren\u2019t ordering anyway.'
+                {
+                    title: 'Calculate Item-Level Prime Cost',
+                    content: 'Prime Cost = Ingredient Cost + Labor Cost (per item). The model uses the Economics Decision Grid: plot each item by Volume (how often ordered) and Prime Cost %. High Volume + Low Prime Cost = Heroes. High Volume + High Prime Cost = Bleeders draining profit on every order. Low Volume + High Prime Cost = Dead Weight. Low Volume + Low Prime Cost = Hidden Gems to promote.'
+                },
+                {
+                    title: 'Make Low-Prime-Cost Items the Default',
+                    content: 'The model\u2019s engineering principle: once you know which items are heroes, make them the default through framing and menu design. This isn\u2019t about removing items - it\u2019s about guiding guests toward items that are both satisfying and profitable. Behavioral framing and economic engineering work together.'
+                },
+                {
+                    title: 'Run the \u201CDon\u2019t Lie to Yourself\u201D Test',
+                    content: 'The model\u2019s validation: Aggregate Prime Cost Target, Sales per Labor Hour (SPLH = Total Sales \u00F7 Total Labor Hours), and Profit per Labor Hour. If SPLH looks healthy but profit doesn\u2019t show up, your prime cost mix is wrong - you\u2019re selling volume of the wrong items.'
+                }
             ],
+            warning: {
+                title: 'The Cardinal Sin',
+                text: 'The model\u2019s cardinal sin of restaurant economics: never cut labor before fixing conversion, framing, throughput, and menu engineering. Labor cuts reduce capacity, which degrades experience, which kills behavior, which makes economics worse. Work the sequence.'
+            },
             cta: 'The Peak Profit Audit includes a full menu P&L analysis showing you exactly which items to push, which to fix, and which to cut.'
         },
-        labor: {
-            headline: 'Your #1 Bottleneck: Labor Efficiency',
-            explanation: 'Your staffing model is misaligned with your volume. This might mean understaffed (quality suffers, team burns out), overstaffed (margins evaporate), or misdeployed (right number, wrong configuration). Labor is typically a restaurant\u2019s largest controllable cost, but cutting labor is rarely the right first move.',
+        profit: {
+            icon: '\uD83D\uDCB0',
+            title: 'PROFIT',
+            quote: 'There are only two modes: compounding or surviving. Compounding means every operational dollar generates future value. Surviving means every dollar is spent staying open.',
+            description: 'Your diagnostic points to the profit layer itself. The upstream layers may be functioning, but the business isn\u2019t compounding - it\u2019s surviving. The model defines profit through three lenses: Net Profit Margin, Restaurant-Level Profit, and Profit per Labor Hour. \u201CBusy but broke\u201D is the model\u2019s term for when revenue looks fine but profit doesn\u2019t materialize.',
             steps: [
-                '<strong>Calculate Covers per Labor Hour by daypart.</strong> Total covers divided by total scheduled labor hours for each shift. Compare Tuesday lunch to Friday dinner. If the ratio varies by more than 40%, your scheduling isn\u2019t matching your demand curve.',
-                '<strong>Map your labor to your constraint.</strong> If the kitchen is the bottleneck, adding one prep cook may generate more profit than cutting a server. If the floor is the bottleneck, reducing section sizes may increase check averages enough to cover the extra labor cost. Match labor investment to your actual constraint.',
-                '<strong>Build a flex schedule around your top 5 volume hours.</strong> Identify the 5 hours per week where you do the most revenue. Ensure those hours have your best team, fully staffed, every week. Then build the rest of the schedule around that anchor.'
+                {
+                    title: 'Apply the Three Profit Lenses',
+                    content: 'Net Profit Margin (is the overall business profitable?), Restaurant-Level Profit (is the unit itself generating cash after all operating costs?), and Profit per Labor Hour (is each hour of labor producing real profit, not just revenue?). The model requires all three - one can mask problems in the others.'
+                },
+                {
+                    title: 'Trace the Profit Cascade',
+                    content: 'The model\u2019s Profit Cascade shows how upstream fixes compound: fixing demand fills the room \u2192 capacity converts it efficiently \u2192 experience creates repeat visits \u2192 behavior lifts check average \u2192 economics ensures each item contributes \u2192 profit emerges as the result of every layer working. Profit is not a lever. It\u2019s a result.'
+                },
+                {
+                    title: 'Shift from Surviving to Compounding',
+                    content: 'The model defines compounding as: investing in capacity, tracking repeat rate, engineering defaults, and building systems that get better over time. Surviving is: chasing daily sales targets, cutting labor when slow, discounting to hit numbers. The question isn\u2019t whether you\u2019re making money today - it\u2019s whether today\u2019s operations create tomorrow\u2019s profit.'
+                }
             ],
-            cta: 'The Peak Profit Audit includes a staffing analysis showing you exactly where labor is helping margins and where it\u2019s hurting them.'
+            warning: {
+                title: 'Work Backward from the Guest',
+                text: 'The model\u2019s Operator\u2019s Commandment: work backward from the guest, not forward from the numbers. When profit is the problem, the instinct is to look at the P&L and cut. The model says: look at the guest journey and build. Every profit problem traces back to one of the upstream layers.'
+            },
+            cta: 'The Peak Profit Audit gives you a full financial diagnostic showing exactly where profit is leaking and the sequenced plan to fix it.'
         },
         mixed: {
-            headline: 'Your Profile: Multiple Constraints',
-            explanation: 'Your responses suggest several areas are contributing to margin pressure simultaneously. This is common in restaurants that have been operating reactively\u2014fixing whatever feels most urgent rather than following a diagnostic sequence. The challenge with multiple constraints is knowing which one to fix first.',
+            icon: '\uD83D\uDD17',
+            title: 'CROSS-LAYER CONSTRAINT',
+            quote: 'Every restaurant is a system. When multiple layers are constrained, the model requires starting upstream - because downstream fixes cannot hold if the foundation is unstable.',
+            description: 'Your diagnostic shows constraints across multiple layers. This is common - and it\u2019s exactly why the model insists on sequence. When two or more layers are elevated, the instinct is to fix what feels most urgent. The model says: start upstream. The upstream constraint is almost always causing or amplifying the downstream ones.',
             steps: [
-                '<strong>Start with the constraint furthest upstream.</strong> The profit chain flows: Demand \u2192 Capacity \u2192 Experience \u2192 Behavior \u2192 Menu Economics. Fix the highest one first, because downstream problems often resolve when the upstream constraint is removed.',
-                '<strong>Pick one metric per week.</strong> Don\u2019t try to fix everything at once. Choose one number\u2014covers, check average, repeat rate, food cost, labor hours\u2014and focus on it for 7 days. Measure daily. Small, focused improvements compound faster than scattered efforts.',
-                '<strong>Get an outside perspective.</strong> When you\u2019re inside the business every day, it\u2019s difficult to see the system clearly. A structured diagnostic from someone outside your operation can identify the sequence of fixes you can\u2019t see from the inside.'
+                {
+                    title: 'Start Upstream Per the Non-Negotiable Sequence',
+                    content: 'DEMAND \u2192 CAPACITY \u2192 EXPERIENCE \u2192 BEHAVIOR \u2192 ECONOMICS \u2192 PROFIT. If both capacity and behavior are constrained, start with capacity - because capacity overload prevents effective behavioral guidance. If both demand and experience are constrained, start with demand - because you need guests in the room before experience optimization matters.'
+                },
+                {
+                    title: 'Check for the Death Spiral',
+                    content: 'The model\u2019s Death Spiral: capacity overload \u2192 less attention per guest \u2192 worse behavioral framing \u2192 lower conversion \u2192 revenue pressure \u2192 labor panic \u2192 cut staff \u2192 even more overload. If you see capacity, experience, AND behavior all elevated, this pattern may be active. The only exit is addressing capacity first - not training harder, not selling harder, not cutting more.'
+                },
+                {
+                    title: 'Work Backward from the Guest, Not Forward from the Numbers',
+                    content: 'The model\u2019s Operator\u2019s Commandment. When everything feels broken, the instinct is to look at the P&L and react. The model says: trace the guest journey from arrival to departure. Where does it break first? That\u2019s your starting point. Fix that, then reassess - the downstream symptoms may resolve on their own.'
+                }
             ],
-            cta: 'This is exactly what the Peak Profit Audit is designed for. We identify your primary constraint, sequence the fixes, and give you a ranked action plan. No guesswork.'
+            warning: {
+                title: 'Sequence Is Law',
+                text: 'The model\u2019s core belief: you cannot optimize a downstream layer while the upstream layer is still constrained. Behavior cannot be fixed while capacity is overloaded. Experience cannot be fixed while demand is insufficient. Economics cannot be fixed while behavior is unguided. Start at the top. Work down. Reassess after each fix.'
+            },
+            cta: 'This is exactly what the Peak Profit Audit is designed for. We identify your primary constraint, sequence the fixes, and give you a ranked action plan.'
         }
     };
+
+    // ── SCORING LOGIC (sequence-aware per the model) ──
+    function determineBottleneck(scores) {
+        var pcts = {};
+        var order = ['demand', 'capacity', 'experience', 'behavior', 'economics', 'profit'];
+
+        order.forEach(function (cat) {
+            pcts[cat] = maxScores[cat] > 0 ? Math.round((scores[cat] / maxScores[cat]) * 100) : 0;
+        });
+
+        var sorted = order.slice().sort(function (a, b) { return pcts[b] - pcts[a]; });
+
+        /*
+         * 1. Sequence-aware walk: diagnose the first upstream category >= 30%.
+         *    "Sequence is Law" - even if a downstream category scores highest,
+         *    an elevated upstream category is diagnosed first.
+         */
+        for (var i = 0; i < order.length; i++) {
+            if (pcts[order[i]] >= 30) {
+                return { primary: order[i], pcts: pcts, sorted: sorted };
+            }
+        }
+
+        /*
+         * 2. Mixed detection: if no single category hits 30%, check whether
+         *    the top two *measurable* categories (maxScore >= 5, excludes profit
+         *    which has only one question) are both elevated and close together.
+         */
+        var measurable = order.filter(function (c) { return maxScores[c] >= 5; });
+        var mSorted = measurable.slice().sort(function (a, b) { return pcts[b] - pcts[a]; });
+        var top = mSorted[0];
+        var second = mSorted[1];
+
+        if (pcts[top] >= 25 && pcts[second] >= 25 && (pcts[top] - pcts[second]) <= 15) {
+            return { primary: 'mixed', pcts: pcts, sorted: sorted };
+        }
+
+        /* 3. Fallback: highest scoring category */
+        if (pcts[sorted[0]] > 0) {
+            return { primary: sorted[0], pcts: pcts, sorted: sorted };
+        }
+
+        /* All zeros - default to profit */
+        return { primary: 'profit', pcts: pcts, sorted: sorted };
+    }
 
     // ── DOM REFERENCES ────────────────────────────────
     var quizContainer = document.getElementById('quiz-container');
@@ -209,42 +373,12 @@
     var howItWorks = document.getElementById('how-it-works');
     var faqSection = document.getElementById('faq');
 
-    // ── DETERMINE BOTTLENECK ──────────────────────────
-    function determineBottleneck(scores) {
-        var entries = [];
-        for (var cat in scores) {
-            if (scores.hasOwnProperty(cat)) {
-                entries.push([cat, scores[cat]]);
-            }
-        }
-        entries.sort(function (a, b) { return b[1] - a[1]; });
-
-        var highest = entries[0];
-        var secondHighest = entries[1];
-
-        // Mixed: tie at top and both >= 4
-        if (highest[1] - secondHighest[1] <= 2 && secondHighest[1] >= 4) {
-            if (highest[1] === secondHighest[1]) {
-                return { primary: 'mixed', secondary: null, topTwo: [highest[0], secondHighest[0]] };
-            }
-            return { primary: highest[0], secondary: secondHighest[0] };
-        }
-
-        // Clear winner
-        if (highest[1] >= 3) {
-            return { primary: highest[0], secondary: secondHighest[1] >= 3 ? secondHighest[0] : null };
-        }
-
-        // Low signal
-        return { primary: 'mixed', secondary: null };
-    }
-
     // ── START QUIZ ────────────────────────────────────
     function startQuiz() {
         state.started = true;
         state.currentQuestion = 0;
         state.answers = [];
-        state.scores = { demand: 0, capacity: 0, experience: 0, behavior: 0, menu: 0, labor: 0 };
+        state.scores = { demand: 0, capacity: 0, experience: 0, behavior: 0, economics: 0, profit: 0 };
         state.completed = false;
 
         heroSection.style.display = 'none';
@@ -346,24 +480,26 @@
         state.completed = true;
         var bottleneck = determineBottleneck(state.scores);
         var result = results[bottleneck.primary];
+        var pcts = bottleneck.pcts;
 
         quizContainer.style.display = 'none';
         resultsContainer.style.display = 'block';
 
         var html = '';
         html += '<div class="result-card">';
-        html += '  <div class="result-badge">' + (categoryIcons[bottleneck.primary] || '\uD83D\uDD0D') + '</div>';
-        html += '  <h2 class="result-headline">' + result.headline + '</h2>';
-        html += '  <p class="result-explanation">' + result.explanation + '</p>';
+        html += '  <div class="result-badge">' + result.icon + '</div>';
+        html += '  <h2 class="result-headline">Your Primary Constraint: ' + result.title + '</h2>';
+        html += '  <blockquote class="result-quote">\u201C' + result.quote + '\u201D</blockquote>';
+        html += '  <p class="result-explanation">' + result.description + '</p>';
 
-        // Score visualization
+        // Score breakdown
         html += '  <div class="result-scores">';
-        html += '    <h3 class="result-scores-title">Your Full Profile</h3>';
+        html += '    <h3 class="result-scores-title">Your Score Breakdown</h3>';
 
-        var categories = ['demand', 'capacity', 'experience', 'behavior', 'menu', 'labor'];
+        var categories = ['demand', 'capacity', 'experience', 'behavior', 'economics', 'profit'];
         for (var k = 0; k < categories.length; k++) {
             var cat = categories[k];
-            var pct = Math.round((state.scores[cat] / maxScores[cat]) * 100);
+            var pct = pcts[cat];
             var isTop = (cat === bottleneck.primary);
             html += '<div class="score-row' + (isTop ? ' score-row--primary' : '') + '">';
             html += '  <span class="score-label">' + categoryLabels[cat] + '</span>';
@@ -376,22 +512,39 @@
 
         html += '  </div>';
 
-        // Next steps
+        // Steps
         html += '  <div class="result-steps">';
-        html += '    <h3>Your 3 Next Moves</h3>';
+        html += '    <h3>What the Model Says to Do</h3>';
         for (var s = 0; s < result.steps.length; s++) {
             html += '<div class="result-step">';
             html += '  <div class="result-step-number">' + (s + 1) + '</div>';
-            html += '  <div class="result-step-content">' + result.steps[s] + '</div>';
+            html += '  <div class="result-step-content"><strong>' + result.steps[s].title + '.</strong> ' + result.steps[s].content + '</div>';
             html += '</div>';
         }
         html += '  </div>';
 
-        // Soft CTA
+        // Warning box
+        if (result.warning) {
+            html += '<div class="warning-box">';
+            html += '  <h4>' + result.warning.title + '</h4>';
+            html += '  <p>' + result.warning.text + '</p>';
+            html += '</div>';
+        }
+
+        // Cross-layer note
+        if (result.crossLayer) {
+            html += '<div class="cross-layer-note">';
+            html += '  <h4>' + result.crossLayer.title + '</h4>';
+            html += '  <p>' + result.crossLayer.text + '</p>';
+            html += '</div>';
+        }
+
+        // CTA
         html += '  <div class="result-cta">';
         html += '    <h3>Want to Go Deeper?</h3>';
         html += '    <p>' + result.cta + '</p>';
         html += '    <a href="https://saidkhan005.github.io/peak-profit-audit/#book" class="cta-primary" target="_blank" rel="noopener">Request a Peak Profit Audit \u2192</a>';
+        html += '    <p class="result-cta-secondary"><a href="https://saidkhan005.github.io/restaurant-money-model/" target="_blank" rel="noopener">Learn more about the Restaurant Money Model \u2192</a></p>';
         html += '  </div>';
 
         // Retake
