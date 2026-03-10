@@ -73,7 +73,7 @@
             ]
         },
         {
-            /* Q7 - BEHAVIOR ("Same menu. Same prices. Different outcome. That means framing.") */
+            /* Q7 - BEHAVIOR (average check varies by server = guidance gap) */
             text: "Same menu, same prices - does average check vary significantly by server?",
             options: [
                 { text: "Yes, hugely - 30 to 40 percent difference", scores: { behavior: 2 } },
@@ -168,8 +168,8 @@
         capacity: {
             icon: '\u2699\uFE0F',
             title: 'CAPACITY',
-            quote: 'Capacity is not how many seats we have. Capacity is how many guests we can take care of while honoring the standard of experience we\u2019ve committed to creating.',
-            description: 'Your primary constraint is capacity. You have the demand, but your operation cannot serve it without degrading the guest experience. The model defines capacity through three ceilings: FOH Server Capacity, Room Capacity, and Kitchen Capacity. Your True Guest Capacity equals the minimum of these three - the lowest ceiling is the binding constraint.',
+            quote: 'Capacity is not how many seats we have. Capacity is how many guests the operation can serve while keeping the standard steady through the rush.',
+            description: 'Your primary constraint is capacity. You have the demand, but your operation cannot serve it without letting the standard slip. The model defines capacity through three ceilings: FOH Server Capacity, Room Capacity, and Kitchen Capacity. Your True Guest Capacity equals the minimum of these three - the lowest ceiling is the binding constraint.',
             steps: [
                 {
                     title: 'Identify the Binding Ceiling',
@@ -197,16 +197,16 @@
         experience: {
             icon: '\u2728',
             title: 'EXPERIENCE',
-            quote: 'Experience is the operational delivery of value - converting a guest\u2019s time and attention into something worth repeating.',
-            description: 'Your primary constraint is experience. Guests are coming in, your capacity can handle them, but the experience isn\u2019t converting first-time visitors into repeat guests. The model measures this through Experience Integrity Indicators: Turn Time stability, Complaints and Comps trending, and most critically - Repeat Visit Rate.',
+            quote: 'Experience is how the standard reaches the guest. When it lands, trust builds. When it does not, the desire to return begins to fade.',
+            description: 'Your primary constraint is experience. Guests are coming in, your capacity can handle them, but the visit is not delivering what the mission promises. The model measures this through primary signals (Complaints/Comps, Repeat Visit Rate) and secondary signals (Turn Time, Beverage Attach Rate, Dessert Rate, Average Check).',
             steps: [
                 {
-                    title: 'Diagnose Through the Operational Value Equation',
-                    content: 'The model defines operational value as: (What We Deliver \u00D7 Consistency) \u00F7 (Speed \u00D7 Friction). High delivery with poor consistency kills value. Fast service with high friction kills value. Identify which component is failing - it\u2019s usually consistency or friction, not the offer itself.'
+                    title: 'Diagnose Through the Experience Value Equation',
+                    content: 'The model defines experience value as: (Dream Outcome \u00D7 Perceived Likelihood) \u00F7 (Time Delay \u00D7 Effort & Friction). What the guest receives, how consistently they receive it, whether the pacing fits the concept, and whether the journey felt easy. Identify which component is failing - it is usually consistency or friction, not the offer itself.'
                 },
                 {
                     title: 'Check for Value Killers',
-                    content: 'The model identifies four Value Killers: Cognitive Overload (too many choices, confusing menu), Attention Dilution (servers spread too thin to be present), Friction with Staff (awkward interactions, inattentive service), and Rushed Experience (capacity overload showing up as experience failure). Each has specific symptoms and metrics.'
+                    content: 'The model identifies four Value Killers: Cognitive Overload (too many choices, confusing menu), Attention Dilution (servers spread too thin to be present), Cold Service (mechanical service, no warmth), and Rushed Experience (capacity overload showing up as experience failure). Each has specific symptoms and metrics.'
                 },
                 {
                     title: 'Protect Lifetime Value',
@@ -222,20 +222,20 @@
         behavior: {
             icon: '\uD83E\uDDE0',
             title: 'BEHAVIOR',
-            quote: 'Same menu. Same prices. Different outcome. That means framing, not economics. People do not resist price. They resist unexplained price.',
-            description: 'Your primary constraint is behavior. Demand is there, capacity handles it, the experience is solid - but guests aren\u2019t being guided to higher-value decisions. The model is clear: this is about framing, not selling. When average check varies by 30\u201340% between servers with the same menu and prices, the variable is behavioral guidance.',
+            quote: 'Behavior is the part of the model that increases average spend once the restaurant operations are already working. It does that by reducing hesitation and guiding the next buying decision well.',
+            description: 'Your primary constraint is behavior. Demand is there, capacity handles it, the experience is solid - but guests are not being guided toward decisions that increase average spend. The model is clear: this is about reducing hesitation and guiding buying decisions, not selling. When average check varies by 30\u201340% between servers with the same menu and prices, the variable is behavioral guidance.',
             steps: [
                 {
                     title: 'Verify Capacity Conditions First',
-                    content: 'The model requires this check: behavioral guidance only works when servers have the time and space to guide. If Capacity Load is above 0.90, servers are in survival mode - they can\u2019t frame, recommend, or create moments. Fix capacity before training behavior.'
+                    content: 'The model requires this check: behavioral guidance only works when servers have the time and space to guide. If Capacity Load is above 0.90, servers are in survival mode - they can only fulfill, not guide. Fix capacity before training behavior.'
                 },
                 {
-                    title: 'Deploy Behavioral Monetization Vehicles',
-                    content: 'The model defines five vehicles: Curated Pairings (suggest specific combinations), Chef Moments (create story-worthy interactions), Guided Progression (lead the meal arc from start to dessert), Bundles Near Singles (position a paired option next to the solo item), and Refill Prompts (systematic not random). These expand perceived value - they don\u2019t pressure.'
+                    title: 'Deploy the Team Actions That Guide the Yes',
+                    content: 'The model defines six actions: Confident Pairing Recommendations (specific, certain, easy to follow), Curated Suggestions (reduce choice overload with two clear paths), Guided Progression (each yes makes the next one easier), Bundles Near Singles (the fuller option feels smarter, not pushier), Refill Prompt Timing (before the glass is empty, before closing mode), and Early Openers (break hesitation and create momentum). Guidance expands value - pressure shrinks it.'
                 },
                 {
-                    title: 'Fix Emotional Flatness',
-                    content: 'The model identifies Emotional Flatness as a value killer in the behavior layer: service is competent but creates no feeling. No surprise, no story, no moment the guest remembers. The fix isn\u2019t scripting - it\u2019s creating the conditions where genuine moments can happen. Pressure shrinks value. Guidance expands it.'
+                    title: 'Remove What Suppresses the Yes',
+                    content: 'The model identifies five suppressors: Too Many Choices (increases hesitation), Weak Timing (good prompt delivered too late), Overloaded Room (team can only fulfill, not guide - see CAPACITY), Pushy Selling (pressure increases resistance), and Unclear Recommendation (team sounds unsure or lists too many options). Remove the suppressor first, then layer in guidance. Pressure shrinks value. Guidance expands it.'
                 }
             ],
             warning: {
@@ -256,7 +256,7 @@
                 },
                 {
                     title: 'Make Low-Prime-Cost Items the Default',
-                    content: 'The model\u2019s engineering principle: once you know which items are heroes, make them the default through framing and menu design. This isn\u2019t about removing items - it\u2019s about guiding guests toward items that are both satisfying and profitable. Behavioral framing and economic engineering work together.'
+                    content: 'The model\u2019s engineering principle: once you know which items are heroes, make them the default through framing and menu design. This isn\u2019t about removing items - it is about guiding guests toward items that are both satisfying and profitable. Behavioral guidance and economic engineering work together.'
                 },
                 {
                     title: 'Run the \u201CDon\u2019t Lie to Yourself\u201D Test',
@@ -265,7 +265,7 @@
             ],
             warning: {
                 title: 'The Cardinal Sin',
-                text: 'The model\u2019s cardinal sin of restaurant economics: never cut labor before fixing conversion, framing, throughput, and menu engineering. Labor cuts reduce capacity, which degrades experience, which kills behavior, which makes economics worse. Work the sequence.'
+                text: 'The model\u2019s cardinal sin of restaurant economics: never cut labor before fixing conversion, guidance, throughput, and menu engineering. Labor cuts reduce capacity, which degrades experience, which kills behavior, which makes economics worse. Work the sequence.'
             },
             cta: 'The Peak Profit Audit includes a full menu P&L analysis showing you exactly which items to push, which to fix, and which to cut.'
         },
@@ -290,7 +290,7 @@
             ],
             warning: {
                 title: 'Work Backward from the Guest',
-                text: 'The model\u2019s Operator\u2019s Commandment: work backward from the guest, not forward from the numbers. When profit is the problem, the instinct is to look at the P&L and cut. The model says: look at the guest journey and build. Every profit problem traces back to one of the upstream layers.'
+                text: 'The model\u2019s Operator\u2019s Commandment: work backward from the guest, not forward from the numbers. Fix capacity before experience. Fix experience before behavior. When profit is the problem, the instinct is to look at the P&L and cut. The model says: look at the guest journey and build. Every profit problem traces back to one of the upstream layers.'
             },
             cta: 'The Peak Profit Audit gives you a full financial diagnostic showing exactly where profit is leaking and the sequenced plan to fix it.'
         },
@@ -306,7 +306,7 @@
                 },
                 {
                     title: 'Check for the Death Spiral',
-                    content: 'The model\u2019s Death Spiral: capacity overload \u2192 less attention per guest \u2192 worse behavioral framing \u2192 lower conversion \u2192 revenue pressure \u2192 labor panic \u2192 cut staff \u2192 even more overload. If you see capacity, experience, AND behavior all elevated, this pattern may be active. The only exit is addressing capacity first - not training harder, not selling harder, not cutting more.'
+                    content: 'The model\u2019s Death Spiral: capacity overload \u2192 less attention per guest \u2192 the standard slips \u2192 lower conversion \u2192 revenue pressure \u2192 labor panic \u2192 cut staff \u2192 even more overload. If you see capacity, experience, AND behavior all elevated, this pattern may be active. The only exit is addressing capacity first - not training harder, not selling harder, not cutting more.'
                 },
                 {
                     title: 'Work Backward from the Guest, Not Forward from the Numbers',
@@ -315,7 +315,7 @@
             ],
             warning: {
                 title: 'Sequence Is Law',
-                text: 'The model\u2019s core belief: you cannot optimize a downstream layer while the upstream layer is still constrained. Behavior cannot be fixed while capacity is overloaded. Experience cannot be fixed while demand is insufficient. Economics cannot be fixed while behavior is unguided. Start at the top. Work down. Reassess after each fix.'
+                text: 'The model\u2019s core belief: you cannot optimize a downstream layer while the upstream layer is still constrained. Experience cannot be fixed while capacity is overloaded. Behavior cannot be fixed while experience is not landing. Economics cannot be fixed while behavior is unguided. Start at the top. Work down. Reassess after each fix.'
             },
             cta: 'This is exactly what the Peak Profit Audit is designed for. We identify your primary constraint, sequence the fixes, and give you a ranked action plan.'
         }
